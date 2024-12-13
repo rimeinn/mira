@@ -15,25 +15,25 @@ source_dir: ".."         # 方案所在目錄
 deploy:
   default:               # 出場設置
     tests:
-      - { send: "a", assert: cand[0].text == "啊" and cand[0].comment == "⚡" }
-      - { send: "bk", assert: cand[0].text == "報" and cand[0].comment == "⚡" }
-      - { send: "sxey;", assert: cand[0].text == "三心二意" }
-      - { send: "y;", assert: cand[0].text == "又" }
+      - { send: "a", assert: cand[1].text == "啊" and cand[1].comment == "⚡" }
+      - { send: "bk", assert: cand[1].text == "報" and cand[1].comment == "⚡" }
+      - { send: "sxey;", assert: cand[1].text == "三心二意" }
+      - { send: "y;", assert: cand[1].text == "又" }
 
   emoji:                 # 繪文字
     options:
       emoji: true
     tests:
-      - { send: "o", assert: cand[1].text == "😯" }
-      - { send: "ou", assert: cand[1].text == "€" }
-      - { send: "mzgo", assert: cand[1].text == "🇺🇸" }
-      - { send: "y;", assert: committed == "又" }
+      - { send: "o", assert: cand[2].text == "😯" }
+      - { send: "ou", assert: cand[2].text == "€" }
+      - { send: "mzgo", assert: cand[2].text == "🇺🇸" }
+      - { send: "y;", assert: commit == "又" }
 
   quick_code_indicator:  # 需要 patch 的情況
     patch:
       moran/quick_code_indicator: "🆒"
     tests:
-      - { send: "a", assert: cand[0].comment == "🆒" }
+      - { send: "a", assert: cand[1].comment == "🆒" }
 ```
 
 然後在該文件上運行 `mira` 程序即可：
@@ -41,6 +41,8 @@ deploy:
 ```
 mira moran.test.yaml
 ```
+
+如果方案存在多次部署，建議使用 `-C` / `--cache-dir` 參數緩存。
 
 ## 構建
 
