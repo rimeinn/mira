@@ -1,0 +1,54 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/rimeinn/mira/refs/heads/main/spec/mira.schema.json",
+    "title": "Mira",
+    "description": "RIME 方案單元測試文檔",
+    "type": "object",
+    "properties": {
+        "schema": {
+            "type": "string",
+            "description": "被測試的方案名"
+        },
+        "source_dir": {
+            "type": "string",
+            "description": "方案源碼所在文件夾路徑"
+        },
+        "deploy": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "patch": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "options": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "boolean"
+                        }
+                    },
+                    "tests": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "send": {
+                                    "type": "string",
+                                    "description": "向 Rime 發送的按鍵序列"
+                                },
+                                "assert": {
+                                    "type": "string",
+                                    "description": "布爾類型的 Lua 表達式"
+                                }
+                            },
+                            "required": ["send", "assert"]
+                        }
+                    }
+                },
+                "required": ["tests"]
+            }
+        }
+    },
+    "required": ["schema", "source_dir", "deploy"]
+}

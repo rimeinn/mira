@@ -1,0 +1,17 @@
+schema: luna_pinyin
+source_dir: /Library/Input Methods/Squirrel.app/Contents/SharedSupport
+deploy:
+  default:
+    tests:
+      - send: a
+        assert: cand[1].text == "啊" and cand[2].text == "阿"
+      - send: b
+        assert: cand[1].text == "不"
+      - send: wei
+        assert: cand[1].text == "爲"
+  simplification:
+    options:
+      simplification: true
+    tests:
+      - send: wei
+        assert: cand[1].text == "为"
