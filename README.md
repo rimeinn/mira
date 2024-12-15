@@ -6,40 +6,12 @@ Mira 之名來自 mirror，義爲「鏡」，而「鏡」則截取自《韻鏡�
 
 ## 示例
 
-首先編寫方案的測試文件。測試文件格式爲 YAML（對 Rime 用戶來說應該不陌生）。
-
-```yaml
-# moran.test.yaml
-schema: moran            # 被測試的方案 ID
-source_dir: ".."         # 方案所在目錄
-deploy:
-  default:               # 出場設置
-    tests:
-      - { send: "a", assert: cand[1].text == "啊" and cand[1].comment == "⚡" }
-      - { send: "bk", assert: cand[1].text == "報" and cand[1].comment == "⚡" }
-      - { send: "sxey;", assert: cand[1].text == "三心二意" }
-      - { send: "y;", assert: cand[1].text == "又" }
-
-  emoji:                 # 繪文字
-    options:
-      emoji: true
-    tests:
-      - { send: "o", assert: cand[2].text == "😯" }
-      - { send: "ou", assert: cand[2].text == "€" }
-      - { send: "mzgo", assert: cand[2].text == "🇺🇸" }
-      - { send: "y;", assert: commit == "又" }
-
-  quick_code_indicator:  # 需要 patch 的情況
-    patch:
-      moran/quick_code_indicator: "🆒"
-    tests:
-      - { send: "a", assert: cand[1].comment == "🆒" }
-```
+首先編寫方案的測試文件，如 [luna_pinyin.test.yaml](https://github.com/rimeinn/mira/blob/master/examples/luna_pinyin.test.yaml)。測試文件格式爲 YAML（對 Rime 用戶來說應該不陌生）。
 
 然後在該文件上運行 `mira` 程序即可：
 
 ```
-mira moran.test.yaml
+mira luna_pinyin.test.yaml
 ```
 
 如果涉及多次部署，建議使用 `-C` / `--cache-dir` 參數緩存產物以加速測試流程。

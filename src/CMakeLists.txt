@@ -21,3 +21,5 @@ endif()
 
 add_executable(mira main.cpp)
 target_link_libraries(mira PRIVATE mira.o)
+
+install(TARGETS mira)
