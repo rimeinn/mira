@@ -84,7 +84,7 @@ main(int argc, char *argv[])
             }
 
             auto result = session->send_keys(keys);
-            std::cout << "[....] " << test_id;
+            std::cout << "- " << test_id << "... ";
             bool pass = false;
             if (!result)
                 goto done;
@@ -93,7 +93,7 @@ main(int argc, char *argv[])
             pass = lua_eval(L, expr.c_str());
 
         done:
-            std::cout << "\r[" << (pass ? "PASS" : "FAIL") << "]\n";
+            std::cout << (pass ? "PASS" : "FAIL") << "\n";
             (pass ? passlist : faillist).push_back(test_id);
             continue;
         }
