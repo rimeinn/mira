@@ -1,7 +1,10 @@
 #include <iostream>
+#include <atomic>
 #include "rime.h"
 
 namespace fs = std::filesystem;
+
+static std::atomic<bool> rime_initialized = false;
 
 Rime::Rime(fs::path source_dir, 
            const std::string& schema_id, 
@@ -32,8 +35,11 @@ Rime::Rime(fs::path source_dir,
     traits.user_data_dir = user_data_dir.c_str();
     traits.log_dir = log_dir.c_str();
     traits.staging_dir = staging_dir.c_str();
-    api->setup(&traits);
-    api->initialize(NULL);
+    if (!rime_initialized.load()) {
+        api->setup(&traits);
+        api->initialize(NULL);
+        rime_initialized.store(true);
+    }
     if (deploy_now && api->start_maintenance(/* full_check */ true))
         api->join_maintenance_thread();
 }
