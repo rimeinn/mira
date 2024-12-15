@@ -53,6 +53,13 @@ main(int argc, char *argv[])
 
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
+    if (doc["script"]) {
+        if (luaL_dostring(L, doc["script"].as<string>().c_str()) != LUA_OK) {
+            std::cerr << "Error evaluating Lua: " << lua_tostring(L, -1) << std::endl;
+            lua_pop(L, 1);
+            return -2;
+        }
+    }
 
     std::vector<std::string> passlist, faillist;
     for (auto pair : doc["deploy"]) {

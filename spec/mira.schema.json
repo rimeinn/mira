@@ -13,6 +13,10 @@
             "type": "string",
             "description": "方案源碼所在文件夾路徑"
         },
+        "script": {
+            "type": "string",
+            "description": "在測試之前運行 Lua 腳本（所有測試共享）",
+        },
         "deploy": {
             "type": "object",
             "additionalProperties": {
