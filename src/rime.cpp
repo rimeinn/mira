@@ -37,9 +37,9 @@ Rime::Rime(fs::path source_dir,
     traits.staging_dir = staging_dir.c_str();
     if (!rime_initialized.load()) {
         api->setup(&traits);
-        api->initialize(NULL);
         rime_initialized.store(true);
     }
+    api->initialize(NULL);
     if (deploy_now && api->start_maintenance(/* full_check */ true))
         api->join_maintenance_thread();
 }
