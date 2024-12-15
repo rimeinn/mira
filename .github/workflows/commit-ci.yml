@@ -23,3 +23,14 @@ jobs:
           name: mira-linux-x86_64
           path: |
             dist/**
+      - name: Upload latest build
+        if: ${{ github.repository == 'rimeinn/mira' && github.ref == 'refs/heads/master' }}
+        uses: 'marvinpinto/action-automatic-releases@latest'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: true
+          title: "Latest build"
+          files: |
+            dist/**
+
