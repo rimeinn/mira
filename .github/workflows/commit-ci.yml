@@ -24,6 +24,7 @@ jobs:
           path: |
             dist/**
       - name: Upload latest build
+        permissions: write-all
         if: ${{ github.repository == 'rimeinn/mira' && github.ref == 'refs/heads/master' }}
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
