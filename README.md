@@ -16,6 +16,21 @@ mira luna_pinyin.test.yaml
 
 如果涉及多次部署，建議使用 `-C` / `--cache-dir` 參數緩存產物以加速測試流程。
 
+## 格式
+
+YAML 文件格式見 [mira.schema.json](./spec/mira.schema.json)。
+
+Lua 中可以使用的變量有：
+
+- `cand`：數組
+  - `cand[1].text` 第一個
+- `commit`：字符串或 `nil`，表示在發送按鍵序列後
+
+## 注意事項
+
+- `cand` 數組下標從 1 開始，且最多只取 100 個候選。
+- 在一組 deploy 測試中，每個測試可以產生副作用。例如，如果第一個測試中讀寫了 userdb，那麼第二個測試中會受到 userdb 的影響。因此 `tests` 順序很重要。
+
 ## 構建
 
 依賴如下外部庫：

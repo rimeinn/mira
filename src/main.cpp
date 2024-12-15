@@ -48,7 +48,7 @@ main(int argc, char *argv[])
 
     auto doc = YAML::LoadFile(spec_path);
     auto schema_id = doc["schema"].as<std::string>();
-    auto source_dir = fs::path{ doc["source_dir"].as<std::string>() };
+    auto source_dir = fs::path(spec_path).remove_filename() / fs::path(doc["source_dir"].as<std::string>());
     std::cout << "SELECT " << schema_id << " from " << source_dir << "\n";
 
     lua_State *L = luaL_newstate();
@@ -134,11 +134,13 @@ lua_setresult(lua_State *L, Result& result)
         lua_pushstring(L, "text");
         lua_pushstring(L, cands[i].text.c_str());
         lua_settable(L, -3);
+        lua_pushstring(L, "comment");
         if (cands[i].comment) {
-            lua_pushstring(L, "comment");
             lua_pushstring(L, cands[i].comment->c_str());
-            lua_settable(L, -3);
+        } else {
+            lua_pushstring(L, "");
         }
+        lua_settable(L, -3);
         lua_rawseti(L, -2, i + 1);
     }
     lua_setglobal(L, "cand");
