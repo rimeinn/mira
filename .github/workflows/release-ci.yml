@@ -1,0 +1,36 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout last commit
+        uses: actions/checkout@v4
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get -y install ninja-build libargparse-dev liblua5.4-dev librime-dev libyaml-cpp-dev
+      - name: Build
+        run: cmake -S. -Bbuild -GNinja -DCMAKE_INSTALL_PREFIX=./dist && cmake --build build && cmake --install build
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/bin/mira
+          asset_name: mira-linux-x86_64
+          asset_content_type: application/octet-stream
