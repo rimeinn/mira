@@ -23,8 +23,9 @@ YAML 文件格式見 [mira.schema.json](./spec/mira.schema.json)。
 Lua 中可以使用的變量有：
 
 - `cand`：數組
-  - `cand[1].text` 第一個
-- `commit`：字符串或 `nil`，表示在發送按鍵序列後
+  - `cand[i].text` 第 i 個候選的候選詞，字符串類型
+  - `cand[i].comment` 第 i 個候選的註釋，字符串類型
+- `commit`：字符串或 `nil`，表示上屏的文字
 
 ## 注意事項
 
