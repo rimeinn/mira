@@ -15,3 +15,9 @@ deploy:
     tests:
       - send: wei
         assert: cand[1].text == "为"
+  patch:
+    patch:
+      engine/translators: []
+    tests:
+      - send: ceshi
+        assert: "#cand == 0"

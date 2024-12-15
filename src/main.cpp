@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -21,6 +22,7 @@ namespace fs = std::filesystem;
 
 static void lua_setresult(lua_State *L, Result& result);
 static bool lua_eval(lua_State *L, const char *expr);
+static void apply_patch(const fs::path& working_dir, const std::string& schema_id, const YAML::Node& patch_yaml);
 
 int
 main(int argc, char *argv[])
@@ -59,8 +61,10 @@ main(int argc, char *argv[])
         std::cout << "DEPLOY " << name << "\n";
 
         // Patch and Deploy
-        Rime rime(source_dir, schema_id, cache_dir);
-        // TODO: patch
+        Rime rime(source_dir, schema_id, cache_dir, /* deploy */ false);
+        if (dspec["patch"]) {
+            apply_patch(rime.get_working_dir(), schema_id, dspec["patch"]);
+        }
         rime.deploy();
 
         // Run each test
@@ -72,7 +76,7 @@ main(int argc, char *argv[])
             auto session = rime.create_session();
 
             if (dspec["options"]) {
-                for (auto kv : doc["options"]) {
+                for (auto kv : dspec["options"]) {
                     const auto& k = kv.first.as<std::string>();
                     const auto& v = kv.second.as<bool>();
                     session->set_option(k, v);
@@ -104,7 +108,7 @@ main(int argc, char *argv[])
         for (const auto& id : faillist) {
             std::cout << id << "\n";
         }
-        return faillist.size();
+        return n_fail < 126 ? n_fail : 126;
     } else {
         std::cout << "Eveything OK!\n";
         return 0;
@@ -152,4 +156,15 @@ lua_eval(lua_State *L, const char *expr)
         lua_pop(L, 1);
         return pass;
     }
+}
+
+// Create a <schema>.custom.yaml
+static void
+apply_patch(const fs::path& working_dir, const std::string& schema_id,
+            const YAML::Node& patch)
+{
+    std::ofstream fout(working_dir / "data" / (schema_id + ".custom.yaml"));
+    YAML::Node doc;
+    doc["patch"] = patch;
+    fout << doc;
 }

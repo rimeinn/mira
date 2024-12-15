@@ -5,15 +5,17 @@ namespace fs = std::filesystem;
 
 Rime::Rime(fs::path source_dir, 
            const std::string& schema_id, 
-           std::optional<fs::path> cache_dir)
-    : source_dir(source_dir)
-    , working_dir(fs::temp_directory_path() / "mira")
+           std::optional<fs::path> cache_dir,
+           bool deploy_now)
+    : working_dir(fs::absolute(fs::temp_directory_path() / "mira"))
     , api(rime_get_api())
     , schema_id(schema_id)
-    , cache_dir(cache_dir)
 {
     auto user_data_dir = working_dir / "data";
     auto log_dir = working_dir / "log";
+    auto staging_dir = cache_dir
+        ? fs::absolute(*cache_dir)
+        : working_dir / "data" / "build";
 
     // Prepare working dir
     fs::remove_all(working_dir);
@@ -29,10 +31,11 @@ Rime::Rime(fs::path source_dir,
     traits.app_name = "rime.mira";
     traits.user_data_dir = user_data_dir.c_str();
     traits.log_dir = log_dir.c_str();
-    if (cache_dir)
-        traits.staging_dir = cache_dir->c_str();
+    traits.staging_dir = staging_dir.c_str();
     api->setup(&traits);
     api->initialize(NULL);
+    if (deploy_now && api->start_maintenance(/* full_check */ true))
+        api->join_maintenance_thread();
 }
 
 Rime::~Rime()
@@ -54,14 +57,20 @@ Rime::create_session()
     RimeSessionId session = api->create_session();
     if (!session)
         return std::nullopt;
-    else
-        return Session(session);
+    return std::optional<Session>(std::in_place, session);
+}
+
+const fs::path&
+Rime::get_working_dir() const
+{
+    return working_dir;
 }
 
 Session::Session(RimeSessionId session)
     : session(session)
     , api(rime_get_api())
-{}
+{
+}
 
 Session::~Session() {
     api->destroy_session(session);
@@ -86,7 +95,7 @@ Session::send_keys(const std::string &keys)
         std::cerr << "cannot simulate key sequence '" << keys << "'\n";
         return std::nullopt;
     }
-    
+
     Result result;
 
     // Get committed
@@ -110,6 +119,5 @@ Session::send_keys(const std::string &keys)
         }
         api->candidate_list_end(&it);
     }
-    api->destroy_session(session);
     return result;
 }
