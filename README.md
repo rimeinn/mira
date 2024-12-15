@@ -42,13 +42,13 @@ deploy:
 mira moran.test.yaml
 ```
 
-如果方案存在多次部署，建議使用 `-C` / `--cache-dir` 參數緩存。
+如果涉及多次部署，建議使用 `-C` / `--cache-dir` 參數緩存產物以加速測試流程。
 
 ## 構建
 
 依賴如下外部庫：
 
-- librime >= 1.12.0
-- yaml-cpp >= 0.8.0
-- argparse >= 3.1.0
-- lua >= 5.4.7
+- librime >= 1.10
+- yaml-cpp >= 0.8
+- argparse >= 3.0
+- lua >= 5.4

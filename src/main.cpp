@@ -47,7 +47,7 @@ main(int argc, char *argv[])
     auto doc = YAML::LoadFile(spec_path);
     auto schema_id = doc["schema"].as<std::string>();
     auto source_dir = fs::path{ doc["source_dir"].as<std::string>() };
-    std::cout << "Select " << schema_id << " at " << source_dir << "\n";
+    std::cout << "SELECT " << schema_id << " from " << source_dir << "\n";
 
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
@@ -56,7 +56,7 @@ main(int argc, char *argv[])
     for (auto pair : doc["deploy"]) {
         auto name = pair.first.as<std::string>();
         auto dspec = pair.second;
-        std::cout << "Deploy " << name << "\n";
+        std::cout << "DEPLOY " << name << "\n";
 
         // Patch and Deploy
         Rime rime(source_dir, schema_id, cache_dir);
@@ -70,6 +70,7 @@ main(int argc, char *argv[])
             std::string test_id = schema_id + "::" + name + "::" + keys;
 
             auto session = rime.create_session();
+
             if (dspec["options"]) {
                 for (auto kv : doc["options"]) {
                     const auto& k = kv.first.as<std::string>();
@@ -77,25 +78,29 @@ main(int argc, char *argv[])
                     session->set_option(k, v);
                 }
             }
+
             auto result = session->send_keys(keys);
             std::cout << "[....] " << test_id;
-            if (!result) {
-                std::cout << "\r[FAIL]\n";
-                faillist.push_back(test_id);
-                continue;
-            }
+            bool pass = false;
+            if (!result)
+                goto done;
 
             lua_setresult(L, *result);
-            bool pass = lua_eval(L, expr.c_str());
-            std::cout << "\r" << (pass ? "[PASS]" : "[FAIL]") << "\n";
+            pass = lua_eval(L, expr.c_str());
+
+        done:
+            std::cout << "\r[" << (pass ? "PASS" : "FAIL") << "]\n";
             (pass ? passlist : faillist).push_back(test_id);
+            continue;
         }
         std::cout << "\n";
     }
     lua_close(L);
 
-    if (faillist.size()) {
-        std::cout << "\n\n" << faillist.size() << " tests failed:\n";
+    size_t n_fail = faillist.size(), n_pass = passlist.size();
+    if (n_fail) {
+        std::cout << "\n\n" << n_fail << "/" << (n_fail + n_pass)
+                  << " tests failed:\n";
         for (const auto& id : faillist) {
             std::cout << id << "\n";
         }
