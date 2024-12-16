@@ -44,7 +44,7 @@ private:
 
 class Session {
 public:
-    Session(RimeSessionId session);
+    explicit Session(RimeSessionId session);
     Session(const Session &) = delete;
     ~Session();
 
