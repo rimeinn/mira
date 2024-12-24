@@ -151,6 +151,14 @@ lua_setresult(lua_State *L, Result& result)
         lua_rawseti(L, -2, i + 1);
     }
     lua_setglobal(L, "cand");
+
+    // preedit
+    if (result.preedit) {
+        lua_pushstring(L, result.preedit->c_str());
+    } else {
+        lua_pushnil(L);
+    }
+    lua_setglobal(L, "preedit");
 }
 
 static bool

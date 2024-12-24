@@ -17,6 +17,7 @@ struct Candidate {
 struct Result {
     std::optional<std::string> commit;
     std::vector<Candidate> candidates;
+    std::optional<std::string> preedit;
 };
 
 class Session;
