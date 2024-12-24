@@ -125,5 +125,15 @@ Session::send_keys(const std::string &keys)
         }
         api->candidate_list_end(&it);
     }
+
+    // Get preedit
+    RIME_STRUCT(RimeContext, context);
+    if (api->get_context(session, &context)) {
+        if (context.composition.length > 0 || context.menu.num_candidates > 0) {
+            if(context.composition.preedit)
+                result.preedit = context.composition.preedit;
+        }
+        api->free_context(&context);
+    }
     return result;
 }
