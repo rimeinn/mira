@@ -13,16 +13,12 @@ jobs:
     steps:
       - name: Checkout last commit
         uses: actions/checkout@v4
-      - name: Install deps
-        run: sudo apt-get update && sudo apt-get -y install ninja-build libargparse-dev liblua5.4-dev librime-dev libyaml-cpp-dev
-      - name: Build
-        run: cmake -S. -Bbuild -GNinja -DCMAKE_INSTALL_PREFIX=./dist && cmake --build build && cmake --install build
-      - name: Upload
-        uses: actions/upload-artifact@v4
         with:
-          name: mira-linux-x86_64
-          path: |
-            dist/**
+          submodules: recursive
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get -y install meson libargparse-dev liblua5.4-dev libyaml-cpp-dev libboost-dev libboost-regex-dev
+      - name: Build
+        run: mkdir dist && meson setup build --prefer-static --prefix=$(realpath ./dist) --buildtype=release && ninja install -C build
       - name: Create nightly release
         if: ${{ github.repository == 'rimeinn/mira' && github.ref == 'refs/heads/master' }}
         uses: 'marvinpinto/action-automatic-releases@latest'

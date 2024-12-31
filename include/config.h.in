@@ -1,5 +1,5 @@
 #pragma once
 
-#cmakedefine PROJECT_NAME "@PROJECT_NAME@"
+#define PROJECT_NAME "@PROJECT_NAME@"
 
-#cmakedefine PROJECT_VERSION "@PROJECT_VERSION@"
+#define PROJECT_VERSION "@PROJECT_VERSION@"
