@@ -10,8 +10,8 @@ Rime::Rime(fs::path source_dir,
            const std::string& schema_id, 
            std::optional<fs::path> cache_dir,
            bool deploy_now)
-    : working_dir(fs::absolute(fs::temp_directory_path() / "mira"))
-    , api(rime_get_api())
+    : api(rime_get_api())
+    , working_dir(fs::absolute(fs::temp_directory_path() / "mira"))
     , schema_id(schema_id)
 {
     auto user_data_dir = working_dir / "data";

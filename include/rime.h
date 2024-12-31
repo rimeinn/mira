@@ -37,7 +37,6 @@ public:
 
 private:
     RimeApi *api;
-    RimeSessionId session;
 
     std::filesystem::path working_dir;
     std::string schema_id;
