@@ -1,4 +1,4 @@
-project('mira', 'cpp', version: '0.1.0', default_options: ['cpp_std=c++20'])
+project('mira', 'cpp', version: '0.2.0', default_options: ['cpp_std=c++20'])
 
 if get_option('prefer_static')
   cmake = import('cmake')
