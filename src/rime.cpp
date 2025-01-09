@@ -78,7 +78,8 @@ Session::Session(RimeSessionId session)
 {
 }
 
-Session::~Session() {
+Session::~Session()
+{
     api->destroy_session(session);
 }
 

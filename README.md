@@ -26,6 +26,7 @@ Lua 中可以使用的變量有：
   - `cand[i].text` 第 i 個候選的候選詞，字符串類型
   - `cand[i].comment` 第 i 個候選的註釋，字符串類型
 - `commit`：字符串或 `nil`，表示上屏的文字
+- `preedit`：字符串或 `nil`，表示當前預編輯文字
 
 ## 注意事項
 
@@ -40,3 +41,15 @@ Lua 中可以使用的變量有：
 - yaml-cpp >= 0.8
 - argparse >= 3.0
 - lua >= 5.4
+
+本項目構建系統使用 Meson + Ninja，參考用法如下：
+
+```bash
+meson setup build --buildtype=release --prefer-static
+cd build
+ninja
+```
+
+其中 `--prefer-static` 是可選的：
+- 如果提供了該參數，則會從 Mira 倉庫關聯的 librime submodule 中構建靜態庫。
+- 如果不提供該參數，則會使用系統上已安裝的 librime。
