@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <regex>
 
 #include <yaml-cpp/yaml.h>
 #include <argparse/argparse.hpp>
@@ -32,6 +33,9 @@ main(int argc, char *argv[])
         .help("test spec file");
     program.add_argument("-C", "--cache-dir")
         .help("cache built artifacts");
+    program.add_argument("-R", "--regex")
+        .help("regex to match desired deployments")
+        .default_value(".*");
     try {
         program.parse_args(argc, argv);
     } catch (const std::exception &err) {
@@ -41,6 +45,7 @@ main(int argc, char *argv[])
     }
 
     std::string spec_path = program.get("FILE");
+    std::regex pat(program.get("-R"));
     std::optional<std::string> cache_dir;
     if (program.is_used("-C")) {
         cache_dir = program.get("-C");
@@ -65,6 +70,9 @@ main(int argc, char *argv[])
     for (auto pair : doc["deploy"]) {
         auto name = pair.first.as<std::string>();
         auto dspec = pair.second;
+        if (!std::regex_match(name, pat)) {
+            continue;
+        }
         std::cout << "DEPLOY " << name << "\n";
 
         // Patch and Deploy
