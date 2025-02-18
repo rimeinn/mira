@@ -17,6 +17,7 @@ extern "C" {
 }
 
 #include "rime.h"
+#include "output_collector.h"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -87,28 +88,37 @@ main(int argc, char *argv[])
             auto keys = test["send"].as<std::string>();
             auto expr = "return ("s + test["assert"].as<std::string>() + ")";
             std::string test_id = schema_id + "::" + name + "::" + keys;
-
-            auto session = rime.create_session();
-
-            if (dspec["options"]) {
-                for (auto kv : dspec["options"]) {
-                    const auto& k = kv.first.as<std::string>();
-                    const auto& v = kv.second.as<bool>();
-                    session->set_option(k, v);
+            std::cout << "- " << test_id << "... " << std::flush;
+            std::string stdout, stderr;
+            bool pass = false;
+            {
+                OutputCollector g(stdout, stderr);
+                auto session = rime.create_session();
+                if (dspec["options"]) {
+                    for (auto kv : dspec["options"]) {
+                        const auto& k = kv.first.as<std::string>();
+                        const auto& v = kv.second.as<bool>();
+                        session->set_option(k, v);
+                    }
                 }
+                auto result = session->send_keys(keys);
+                if (!result)
+                    goto done;
+
+                lua_setresult(L, *result);
+                pass = lua_eval(L, expr.c_str());
             }
 
-            auto result = session->send_keys(keys);
-            std::cout << "- " << test_id << "... ";
-            bool pass = false;
-            if (!result)
-                goto done;
-
-            lua_setresult(L, *result);
-            pass = lua_eval(L, expr.c_str());
-
         done:
-            std::cout << (pass ? "PASS" : "FAIL") << "\n";
+            std::cout << (pass ? "PASS" : "FAIL") << std::endl;
+            if (!pass) {
+                if (stdout.length() > 0) {
+                    std::cout << "\n========= STDOUT =========\n" << stdout << "\n" << std::endl;
+                }
+                if (stderr.length() > 0) {
+                    std::cout << "\n========= STDERR =========\n" << stderr << "\n" << std::endl;
+                }
+            }
             (pass ? passlist : faillist).push_back(test_id);
             continue;
         }

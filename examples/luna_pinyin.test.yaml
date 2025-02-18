@@ -21,3 +21,8 @@ deploy:
     tests:
       - send: ceshi
         assert: "#cand == 0"
+
+  fail:
+    tests:
+      - send: a
+        assert: print("output!") or false
