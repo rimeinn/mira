@@ -1,5 +1,13 @@
 schema: luna_pinyin
 source_dir: /Library/Input Methods/Squirrel.app/Contents/SharedSupport
+
+script: |
+  function eq(left, right)
+    print('Left  = ' .. tostring(left))
+    print('Right = ' .. tostring(right))
+    return left == right
+  end
+
 deploy:
   default:
     tests:
@@ -25,4 +33,4 @@ deploy:
   fail:
     tests:
       - send: a
-        assert: print("output!") or false
+        assert: print("output!") or eq(cand[1].text, "失敗")
