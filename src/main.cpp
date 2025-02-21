@@ -94,6 +94,7 @@ main(int argc, char *argv[])
             {
                 OutputCollector g(stdout, stderr);
                 auto session = rime.create_session();
+                session->select_schema(schema_id);
                 if (dspec["options"]) {
                     for (auto kv : dspec["options"]) {
                         const auto& k = kv.first.as<std::string>();
