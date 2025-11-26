@@ -9,11 +9,18 @@ if get_option('prefer_static')
                                      'ENABLE_EXTERNAL_PLUGINS': false})
   librime_project = cmake.subproject('librime', options: librime_options)
   librime = librime_project.dependency('rime-static').as_link_whole()
+
+  # link with deps bundled with librime
+  yamlcpp = declare_dependency()
+
+  # workaround for libunwind
+  cc = meson.get_compiler('cpp')
+  libunwind = cc.find_library('unwind', required: true, static: false)
 else
   librime = dependency('rime', version: '>=1.10')
+  yamlcpp = dependency('yaml-cpp', version: '>=0.8')
 endif
 
-yamlcpp = dependency('yaml-cpp', version: '>=0.8')
 argparse = dependency('argparse', version: '>=3.0')
 lua = dependency('lua', version: '>=5.4')
 
