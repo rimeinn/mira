@@ -15,7 +15,11 @@ if get_option('prefer_static')
 
   # workaround for libunwind
   cc = meson.get_compiler('cpp')
-  libunwind = cc.find_library('unwind', required: true, static: false)
+  if host_machine.system() == 'linux'
+    libunwind = cc.find_library('unwind', required: false, static: false)
+  else
+    libunwind = declare_dependency()
+  endif
 else
   librime = dependency('rime', version: '>=1.10')
   yamlcpp = dependency('yaml-cpp', version: '>=0.8')
