@@ -11,3 +11,5 @@ make deps
 ./install-plugins.sh rime/librime-predict
 ./install-plugins.sh lotem/librime-octagram
 
+# patch librime-lua
+cp ../patches/CMakeLists.txt plugins/lua/CMakeLists.txt

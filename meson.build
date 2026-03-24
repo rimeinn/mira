@@ -5,7 +5,9 @@ if get_option('prefer_static')
   cmake = import('cmake')
   run_command('bash', 'subprojects/setup.sh', check: true)
   librime_options = cmake.subproject_options()
-  librime_options.add_cmake_defines({'BUILD_SHARED_LIBS': false,
+  librime_options.add_cmake_defines({'CMAKE_FIND_LIBRARY_SUFFIXES': '.a',
+                                     'BUILD_SHARED_LIBS': false,
+                                     'BUILD_STATIC': true,
                                      'BUILD_MERGED_PLUGINS': true,
                                      'ENABLE_EXTERNAL_PLUGINS': false,
                                      'LUA_VERSION': 'lua' + lua_version.replace('.', '')})
