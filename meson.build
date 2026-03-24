@@ -18,7 +18,9 @@ else
 endif
 
 argparse = dependency('argparse', version: '>=3.0')
-lua = dependency('lua', version: '>=5.4')
+
+lua_version = get_option('lua_version')
+lua = dependency('lua' + lua_version)
 
 subdir('include')
 subdir('src')
