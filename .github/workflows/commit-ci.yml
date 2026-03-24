@@ -53,5 +53,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: latest
           prerelease: true
+          make_latest: true
           name: "Latest build"
           files: dist/bin/mira*
