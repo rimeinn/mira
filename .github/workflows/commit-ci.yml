@@ -10,22 +10,48 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    container:
+      image: debian:testing
+    strategy:
+      matrix:
+        lua_version: ["5.2", "5.3", "5.4", "5.5", "jit", ""]
     steps:
+      - name: Install deps
+        run: apt-get update && apt-get -y install ca-certificates git meson cmake libargparse-dev libyaml-cpp-dev libboost-dev libboost-regex-dev liblua5.1-dev liblua5.2-dev liblua5.3-dev liblua5.4-dev liblua5.5-dev libluajit-5.1-dev
       - name: Checkout last commit
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install deps
-        run: sudo apt-get update && sudo apt-get -y install meson libargparse-dev liblua5.4-dev libyaml-cpp-dev libboost-dev libboost-regex-dev
       - name: Build
-        run: mkdir dist && meson setup build --prefer-static --prefix=$(realpath ./dist) --buildtype=release && ninja install -C build
+        run: |
+          mkdir dist
+          LUA_OPT=""
+          if [ -n "${{ matrix.lua_version }}" ]; then
+            LUA_OPT="-Dlua_version=${{ matrix.lua_version }}"
+          fi
+          meson setup build --prefer-static --prefix=$(realpath ./dist) --buildtype=release $LUA_OPT
+          ninja install -C build
+      - name: Rename artifact (versioned)
+        if: ${{ matrix.lua_version != '' }}
+        run: cp dist/bin/mira dist/bin/mira-lua${{ matrix.lua_version }}
+      - name: Upload artifact (versioned)
+        if: ${{ matrix.lua_version != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mira-lua-${{ matrix.lua_version }}
+          path: dist/bin/mira-lua${{ matrix.lua_version }}
+      - name: Upload artifact (default)
+        if: ${{ matrix.lua_version == '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mira
+          path: dist/bin/mira
       - name: Create nightly release
         if: ${{ github.repository == 'rimeinn/mira' && github.ref == 'refs/heads/master' }}
-        uses: 'marvinpinto/action-automatic-releases@latest'
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: latest
           prerelease: true
-          title: "Latest build"
-          files: |
-            dist/bin/mira
+          name: "Latest build"
+          files: dist/bin/mira*

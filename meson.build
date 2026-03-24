@@ -1,12 +1,14 @@
 project('mira', 'cpp', version: '0.2.0', default_options: ['cpp_std=c++20'])
 
+lua_version = get_option('lua_version')
 if get_option('prefer_static')
   cmake = import('cmake')
   run_command('bash', 'subprojects/setup.sh', check: true)
   librime_options = cmake.subproject_options()
   librime_options.add_cmake_defines({'BUILD_SHARED_LIBS': false,
                                      'BUILD_MERGED_PLUGINS': true,
-                                     'ENABLE_EXTERNAL_PLUGINS': false})
+                                     'ENABLE_EXTERNAL_PLUGINS': false,
+                                     'LUA_VERSION': 'lua' + lua_version.replace('.', '')})
   librime_project = cmake.subproject('librime', options: librime_options)
   librime = librime_project.dependency('rime-static').as_link_whole()
 
@@ -19,8 +21,7 @@ endif
 
 argparse = dependency('argparse', version: '>=3.0')
 
-lua_version = get_option('lua_version')
-lua = dependency('lua' + lua_version)
+lua = dependency('lua' + lua_version, static: get_option('prefer_static'))
 
 subdir('include')
 subdir('src')
