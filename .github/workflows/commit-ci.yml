@@ -1,6 +1,8 @@
 name: Commit CI
 
 on:
+  schedule:
+    - cron: '0 20 * * *'
   push:
     branches:
       - master
@@ -18,7 +20,7 @@ jobs:
         lua_version: ["5.2", "5.3", "5.4", "5.5", "jit", ""]
     steps:
       - name: Install deps
-        run: apt-get update && apt-get -y install ca-certificates git meson cmake libargparse-dev libyaml-cpp-dev libboost-dev libboost-regex-dev liblua5.1-dev liblua5.2-dev liblua5.3-dev liblua5.4-dev liblua5.5-dev libluajit-5.1-dev
+        run: apt-get update && apt-get -y install build-essential ca-certificates git meson cmake libargparse-dev libyaml-cpp-dev libboost-dev libboost-regex-dev liblua5.1-dev liblua5.2-dev liblua5.3-dev liblua5.4-dev liblua5.5-dev libluajit-5.1-dev
       - name: Checkout last commit
         uses: actions/checkout@v4
         with:

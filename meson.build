@@ -1,4 +1,7 @@
-project('mira', 'cpp', version: '0.2.0', default_options: ['cpp_std=c++20'])
+project('mira', 'cpp',
+        version: '0.2.0',
+        default_options: ['cpp_std=c++20'],
+        meson_version: '>=1.1')
 
 lua_version = get_option('lua_version')
 librime_commit = get_option('librime_commit')
