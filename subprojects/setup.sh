@@ -1,6 +1,14 @@
 #!/bin/bash
 
+LIBRIME_COMMIT="$1"
+
 cd subprojects/librime
+
+if [ "$LIBRIME_COMMIT" != "" ]; then
+    git fetch origin
+    git checkout "$LIBRIME_COMMIT"
+    git submodule update --recursive
+fi
 
 # patch opencc
 echo "#include<cstdint>" | cat - deps/opencc/src/SerializedValues.hpp > temp

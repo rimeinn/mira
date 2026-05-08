@@ -1,1 +1,2 @@
+option('librime_commit', type: 'string', value: '', description: 'librime version to use for static builds (empty means the default submodule version)')
 option('lua_version', type: 'string', value: '5.4', description: 'Lua version to use')

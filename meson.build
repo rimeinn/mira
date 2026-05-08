@@ -1,9 +1,11 @@
 project('mira', 'cpp', version: '0.2.0', default_options: ['cpp_std=c++20'])
 
 lua_version = get_option('lua_version')
+librime_commit = get_option('librime_commit')
+
 if get_option('prefer_static')
   cmake = import('cmake')
-  run_command('bash', 'subprojects/setup.sh', check: true)
+  run_command('bash', 'subprojects/setup.sh', librime_commit, check: true)
   librime_options = cmake.subproject_options()
   librime_options.add_cmake_defines({'CMAKE_FIND_LIBRARY_SUFFIXES': '.a',
                                      'BUILD_SHARED_LIBS': false,
