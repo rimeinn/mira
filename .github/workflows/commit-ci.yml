@@ -16,7 +16,7 @@ jobs:
       image: debian:testing
     strategy:
       matrix:
-        librime: ["", "master", "1.16.1", "1.15.0", "1.14.0", "1.13.1"]
+        librime: ["", "master", "1.17", "1.16.1", "1.15.0", "1.14.0", "1.13.1"]
         lua_version: ["5.2", "5.3", "5.4", "5.5", "jit", ""]
     steps:
       - name: Install deps
