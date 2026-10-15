@@ -21,6 +21,10 @@ if get_option('prefer_static')
 
   # link with deps bundled with librime
   yamlcpp = declare_dependency()
+
+  # do not dynlink to libsnappy (a dependency of leveldb)
+  libsnappy = dependency('snappy', static: true)
+  librime = declare_dependency(dependencies: [librime, libsnappy])
 else
   librime = dependency('rime', version: '>=1.10')
   yamlcpp = dependency('yaml-cpp', version: '>=0.8')
