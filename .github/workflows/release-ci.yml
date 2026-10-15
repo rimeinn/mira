@@ -14,7 +14,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install deps
-        run: sudo apt-get update && sudo apt-get -y install meson libargparse-dev liblua5.4-dev libyaml-cpp-dev libboost-dev libboost-regex-dev
+        run: sudo apt-get update && sudo apt-get -y install meson libargparse-dev liblua5.4-dev libyaml-cpp-dev libboost-dev libboost-regex-dev libsnappy-dev
       - name: Build
         run: mkdir dist && meson setup build --prefer-static --prefix=$(realpath ./dist) --buildtype=release && ninja install -C build
       - name: Create release
