@@ -57,6 +57,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     if: ${{ github.repository == 'rimeinn/mira' && github.ref == 'refs/heads/master' }}
     steps:
       - name: Download all artifacts
@@ -73,3 +75,9 @@ jobs:
           make_latest: true
           name: "Latest build"
           files: dist/bin/mira*
+      - name: Update latest tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/latest" \
+            -f sha="$GITHUB_SHA" -F force=true
