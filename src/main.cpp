@@ -34,6 +34,8 @@ main(int argc, char *argv[])
         .help("test spec file");
     program.add_argument("-C", "--cache-dir")
         .help("cache built artifacts");
+    program.add_argument("-S", "--shared-dir")
+        .help("shared data directory (defaults to the test user directory)");
     program.add_argument("-R", "--regex")
         .help("regex to match desired deployments")
         .default_value(".*");
@@ -50,6 +52,11 @@ main(int argc, char *argv[])
     std::optional<std::string> cache_dir;
     if (program.is_used("-C")) {
         cache_dir = program.get("-C");
+    }
+
+    std::optional<std::string> shared_dir;
+    if (program.is_used("-S")) {
+        shared_dir = program.get("-S");
     }
 
     auto doc = YAML::LoadFile(spec_path);
@@ -77,7 +84,7 @@ main(int argc, char *argv[])
         std::cout << "DEPLOY " << name << "\n";
 
         // Patch and Deploy
-        Rime rime(source_dir, schema_id, cache_dir, /* deploy */ false);
+        Rime rime(source_dir, schema_id, cache_dir, shared_dir, /* deploy */ false);
         if (dspec["patch"]) {
             apply_patch(rime.get_working_dir(), schema_id, dspec["patch"]);
         }

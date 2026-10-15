@@ -16,6 +16,8 @@ mira luna_pinyin.test.yaml
 
 如果涉及多次部署，建議使用 `-C` / `--cache-dir` 參數緩存產物以加速測試流程。
 
+使用 `-S` / `--shared-dir` 指定 Rime 共享資料目錄（相對路徑以執行時工作目錄爲準）。省略時使用測試的 user dir。
+
 ## 格式
 
 YAML 文件格式見 [mira.schema.json](./spec/mira.schema.json)。

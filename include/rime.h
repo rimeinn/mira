@@ -27,6 +27,7 @@ public:
     Rime(std::filesystem::path source_dir, 
          const std::string& schema_id,
          std::optional<std::filesystem::path> cache_dir = std::nullopt,
+         std::optional<std::filesystem::path> shared_dir = std::nullopt,
          bool deploy_now = true);
     ~Rime();
 

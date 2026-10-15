@@ -9,12 +9,14 @@ static std::atomic<bool> rime_initialized = false;
 Rime::Rime(fs::path source_dir, 
            const std::string& schema_id, 
            std::optional<fs::path> cache_dir,
+           std::optional<fs::path> shared_dir,
            bool deploy_now)
     : api(rime_get_api())
     , working_dir(fs::absolute(fs::temp_directory_path() / "mira"))
     , schema_id(schema_id)
 {
     auto user_data_dir = working_dir / "data";
+    auto shared_data_dir = shared_dir.value_or(user_data_dir);
     auto log_dir = working_dir / "log";
     auto staging_dir = cache_dir
         ? fs::absolute(*cache_dir)
@@ -32,6 +34,7 @@ Rime::Rime(fs::path source_dir,
     // Initialize Rime
     RIME_STRUCT(RimeTraits, traits);
     traits.app_name = "rime.mira";
+    traits.shared_data_dir = shared_data_dir.c_str();
     traits.user_data_dir = user_data_dir.c_str();
     traits.log_dir = log_dir.c_str();
     traits.staging_dir = staging_dir.c_str();
@@ -39,7 +42,7 @@ Rime::Rime(fs::path source_dir,
         api->setup(&traits);
         rime_initialized.store(true);
     }
-    api->initialize(NULL);
+    api->initialize(&traits);
     if (deploy_now && api->start_maintenance(/* full_check */ true))
         api->join_maintenance_thread();
 }
