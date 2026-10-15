@@ -22,7 +22,7 @@ jobs:
       - name: Install deps
         run: apt-get update && apt-get -y install build-essential ca-certificates git meson cmake libargparse-dev libyaml-cpp-dev libboost-dev libboost-regex-dev liblua5.1-dev liblua5.2-dev liblua5.3-dev liblua5.4-dev liblua5.5-dev libluajit-5.1-dev
       - name: Checkout last commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: Build
